@@ -122,5 +122,3 @@ draw()
 
 window.bind("<KeyRelease>", change_direction)
 window.mainloop()
-
- 
