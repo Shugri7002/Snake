@@ -18,7 +18,7 @@ window = tkinter.Tk()
 window.title("Snake")
 window.resizable(False, False)
 
-canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=5)
+canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=0)
 canvas.pack()
 window.update()
 
@@ -40,20 +40,20 @@ velocityX = 0
 velocityY = 0
 
 def change_direction(e): #e = event
-   #print (e)
+   #print(e)
    #print(e.keysym)
    global velocityX, velocityY
 
-   if(e.keysym =="Up"):
+   if(e.keysym == "Up"):
       velocityX = 0
-      velocityY = 1
+      velocityY = -1
    elif(e.keysym == "Down"):
       velocityX = 0
       velocityY = 1
-   elif(e.keysym =="Left"):
+   elif(e.keysym == "Left"):
       velocityX = -1
       velocityY = 0
-   elif(e.keysym =="Right"):
+   elif(e.keysym == "Right"):
       velocityX = 1
       velocityY = 0
 
@@ -66,19 +66,18 @@ def  move():
 def draw():
    global snake
    move()
+ 
+   #draw snake 
+   canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
+ 
+   #draw food
+   canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "red")
 
-#draw snake 
-canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
-
-#draw food
-canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "red")
-
-window.after(100, draw) #100ms = 1/10 second, 10 frames/second
+   window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
 draw()
 
 window.bind("<KeyRelease>", change_direction)
 window.mainloop()
 
-
-shugri is de beste!!!
+ 
