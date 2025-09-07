@@ -121,9 +121,9 @@ def  move():
          tile.x = prev_tile.x
          tile.y = prev_tile.y
 
-     #player 1 move head
-      snake.x += velocityX * TILE_SIZE
-      snake.y += velocityY * TILE_SIZE
+ #player 1 move head
+   snake.x += velocityX * TILE_SIZE
+   snake.y += velocityY * TILE_SIZE
 
 
     #player 2 wall
@@ -155,63 +155,48 @@ def  move():
          tile.x = prev_tile.x
          tile.y = prev_tile.y
 
-     #player 2 move head
-      snake2.x += velocity2X * TILE_SIZE
-      snake2.y += velocity2Y * TILE_SIZE
-
-
-
-    #Player 2(Arrow)
-   if(snake2.x < 0 or snake2.x >= WINDOW_WIDTH or snake2.y < 0 or snake2.y >= WINDOW_HEIGHT):
-     game_over = True
-     return
-
-   for tile in snake2_body:
-      if(snake2.x== tile.x and snake2.y == tile.y):
-          game_over = True
-          return
-
-   #collision
-   if (snake2.x == food.x and snake2.y == food.y):
-      snake2_body.append(Tile(food.x, food.y))
-      food.x = random.randint(0, COLS-1) * TILE_SIZE
-      food.y = random.randint(0, ROWS-1) * TILE_SIZE
-      score2 += 1
-
-   #update snake body    
-   for i in range (len(snake2_body)-1, -1, -1):
-      tile = snake2_body[i]
-      if(i == 0):
-         tile.x = snake2.x 
-         tile.y = snake2.y
-      else:
-         prev_tile=snake2_body[i-1]
-         tile.x = prev_tile.x
-         tile.y = prev_tile.y
-
+#player 2 move head
    snake2.x += velocity2X * TILE_SIZE
    snake2.y += velocity2Y * TILE_SIZE
+
 
 def draw():
    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2
    move()
- 
    canvas.delete("all")
 
    #draw food
-   canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "red")
+   canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
    
-   #draw snake 
+   #draw player 1 snake 
    canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
- 
    for tile in snake_body:
     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="lime green" )
    
+   #draw player 2 snake 
+   canvas.create_rectangle(snake2.x, snake2.y, snake2.x + TILE_SIZE, snake2.y + TILE_SIZE, fill = "#ff4fae")
+   for tile in snake2_body:
+    canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="#ff4fae")
+   
+   canvas.create_text(30,20, font ="Arial 10", text=f"P1: {score}", fill="white", anchor="w")
+   canvas.create_text(window_width- 30,20, font="Arial 10", text=f"P2: {score2}", fill="white",anchor="e")
+   
+   
    if(game_over):
-      canvas.create_text(window_width/2, WINDOW_HEIGHT/2, font = "Arial 20", text = f"Game Over: {score}", fill="white") 
+      #winner text
+      if score > score2:
+         result = f"Player 1 wins!  {score}-{score2}"
+      elif score2 > score:
+         result = f"Player 2 wins!  {score2}-{score}"
+      else: 
+          result = f"It's a tie!  {score}-{score2}"
+
+    
+      canvas.create_text(window_width/2, WINDOW_HEIGHT/2 - 20, font =("Arial", 20, "bold"), text ="GAME OVER", fill="white") 
+      canvas.create_text(window_width/2, WINDOW_HEIGHT/2 + 20, font =("Arial", 14, "bold"), text=result, fill="white") 
+      
    else:
-      canvas.create_text(30, 20, font= "Arial 10", text = f"Score: {score}", fill= "white")
-   window.after(100, draw) #100ms = 1/10 second, 10 frames/second
+      window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
 draw()
 
