@@ -110,8 +110,8 @@ def  move():
    #player 1 eats
    if (snake.x == food.x and snake.y == food.y):
       snake_body.append(Tile(food.x, food.y))
-      food.x = random.randint(0, COLS-1) * TILE_SIZE
-      food.y = random.randint(0, ROWS-1) * TILE_SIZE
+      food.x = random.randint(PAD // TILE_SIZE, (WINDOW_WIDTH - PAD // TILE_SIZE - 1) * TILE_SIZE)
+      food.y = random.randint(PAD // TILE_SIZE, (WINDOW_HEIGHT - PAD // TILE_SIZE - 1) * TILE_SIZE)
       score += 1
 
    #player tail follow   
