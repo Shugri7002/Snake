@@ -4,6 +4,7 @@ import random
 ROWS = 25
 COLS = 25
 TILE_SIZE = 25
+PAD=50 
 
 WINDOW_WIDTH = TILE_SIZE * COLS
 WINDOW_HEIGHT= TILE_SIZE * ROWS
@@ -18,9 +19,12 @@ window = tkinter.Tk()
 window.title("Snake")
 window.resizable(False, False)
 
-canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=0)
+canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=5)
 canvas.pack()
 window.update()
+
+def draw_frame():
+   canvas.create_rectangle(PAD,PAD, WINDOW_WIDTH - PAD, WINDOW_HEIGHT - PAD, outline="#39ff14", width=4)
 
 #center the window
 window_width = window.winfo_width()
@@ -92,8 +96,8 @@ def  move():
    if (game_over):
       return
 
-    #player 1 wall
-   if(snake.x < 0 or snake.x >= WINDOW_WIDTH or snake.y < 0 or snake.y >= WINDOW_HEIGHT):
+     #player 1 wall + neon green frame
+   if(snake.x <= PAD or snake.x + TILE_SIZE >= WINDOW_WIDTH - PAD or snake.y <= PAD or snake.y +TILE_SIZE >= WINDOW_HEIGHT - PAD):
     game_over = True
     return
    
@@ -125,11 +129,10 @@ def  move():
    snake.x += velocityX * TILE_SIZE
    snake.y += velocityY * TILE_SIZE
 
-
-    #player 2 wall
-   if(snake2.x < 0 or snake2.x >= WINDOW_WIDTH or snake2.y < 0 or snake2.y >= WINDOW_HEIGHT):
-     game_over = True
-     return
+    #player 1 wall + neon green frame
+   if(snake.x <= PAD or snake.x + TILE_SIZE >= WINDOW_WIDTH - PAD or snake.y <= PAD or snake.y +TILE_SIZE >= WINDOW_HEIGHT - PAD):
+    game_over = True
+    return
    
    #player 2 self
    for tile in snake2_body:
@@ -155,15 +158,39 @@ def  move():
          tile.x = prev_tile.x
          tile.y = prev_tile.y
 
-#player 2 move head
+ #player 2 move head
    snake2.x += velocity2X * TILE_SIZE
    snake2.y += velocity2Y * TILE_SIZE
+
+    #player 2 wall + neon green frame
+   if(snake2.x <= PAD or snake2.x + TILE_SIZE >= WINDOW_WIDTH - PAD or snake2.y <= PAD or snake2.y +TILE_SIZE >= WINDOW_HEIGHT - PAD):
+    game_over = True
+    return
+
+ #collision
+ #Player 1 into P2 body
+   for t in snake2_body:
+    if snake.x == t.x and snake.y == t.y:
+      game_over = True
+      return
+
+ #Player 2 into P1 body
+   for t in snake_body:
+    if snake2.x == t.x and snake2.y == t.y:
+      game_over = True
+      return
+    
+   #head-on
+   if snake.x == snake2.x and snake.y == snake2.y:
+      game_over = True
+      return
 
 
 def draw():
    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2
    move()
    canvas.delete("all")
+   draw_frame()
 
    #draw food
    canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
