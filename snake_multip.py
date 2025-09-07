@@ -110,8 +110,14 @@ def  move():
    #player 1 eats
    if (snake.x == food.x and snake.y == food.y):
       snake_body.append(Tile(food.x, food.y))
-      food.x = random.randint(PAD // TILE_SIZE, (WINDOW_WIDTH - PAD // TILE_SIZE - 1) * TILE_SIZE)
-      food.y = random.randint(PAD // TILE_SIZE, (WINDOW_HEIGHT - PAD // TILE_SIZE - 1) * TILE_SIZE)
+
+    # place food fully inside the neon frame
+      min_col = PAD // TILE_SIZE
+      max_col = (WINDOW_WIDTH  - PAD - TILE_SIZE)  // TILE_SIZE
+      min_row = PAD // TILE_SIZE
+      max_row = (WINDOW_HEIGHT - PAD - TILE_SIZE)  // TILE_SIZE
+      food.x = random.randint(min_col, max_col) * TILE_SIZE
+      food.y = random.randint(min_row, max_row) * TILE_SIZE
       score += 1
 
    #player tail follow   
@@ -143,8 +149,14 @@ def  move():
    #player 2 eats
    if (snake2.x == food.x and snake2.y == food.y):
       snake2_body.append(Tile(food.x, food.y))
-      food.x = random.randint(0, COLS-1) * TILE_SIZE
-      food.y = random.randint(0, ROWS-1) * TILE_SIZE
+
+    # place food fully inside the neon frame
+      min_col = PAD // TILE_SIZE
+      max_col = (WINDOW_WIDTH  - PAD - TILE_SIZE)  // TILE_SIZE
+      min_row = PAD // TILE_SIZE
+      max_row = (WINDOW_HEIGHT - PAD - TILE_SIZE)  // TILE_SIZE
+      food.x = random.randint(min_col, max_col) * TILE_SIZE
+      food.y = random.randint(min_row, max_row) * TILE_SIZE
       score2 += 1
 
    #player 2 tail follow   
