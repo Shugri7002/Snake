@@ -1,6 +1,17 @@
 import tkinter
 import random
 
+WHITE = "#ffffff"
+NEON_GREEN = "#39FF14"
+NEON_PINK = "#FF4FAE"
+YELLOW = "#FFD34D"
+
+FONT_TILE = ("Arial Black", 54)
+FONT_H1 = ("Arial Black", 40)
+FONT_HUD = ("Arial Black", 25)
+FONT_BTN = ("Arial Black", 18)
+
+
 ROWS = 25
 COLS = 25
 TILE_SIZE = 25
@@ -55,15 +66,16 @@ score2 = 0
 food = Tile(10*TILE_SIZE, 10*TILE_SIZE)
 game_over = False
 
+game_state = "menu"
+
 def change_direction(e): #e = event
    #print(e)
    #print(e.keysym)
    global velocityX, velocityY, velocity2X, velocity2Y
    if(game_over):
       return
-
-    #player 1(WASD)
-    #Player 2 (Arrows)
+   
+    #player 1(WASD) 
    if((e.keysym == "w" or e.keysym =="W") and velocityY != 1):
       velocityX = 0
       velocityY = -1
@@ -90,6 +102,18 @@ def change_direction(e): #e = event
    elif(e.keysym == "Right" and velocity2X != -1):
       velocity2X = 1
       velocity2Y = 0
+
+
+def handle_keypress(e):
+    global game_state
+    #start game from menu
+    if game_state == "menu" and e.keysym.lower() == "space":
+       game_state = "playing"
+       return
+   #only allow movement while playing
+    if game_state == "playing":
+      change_direction(e)
+
 
 def  move():
    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2
@@ -199,29 +223,43 @@ def  move():
 
 
 def draw():
-   global snake,snake2, food, snake_body, snake2_body, game_over, score, score2
-   move()
-   canvas.delete("all")
-   draw_frame()
+    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state
+    canvas.delete("all")
+    draw_frame()
 
-   #draw food
-   canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
+   # Menu state
+    if game_state == "menu":
+   #title text in center
+     canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill = NEON_GREEN, font=FONT_H1, anchor="center")
+    # Hint text
+     canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 10, text="Press SPACE to start", fill = WHITE, font= FONT_HUD, anchor="center")
+    
+     window.after(100,draw)
+     return 
+
+    (move)
+
+    #draw food
+    canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
    
-   #draw player 1 snake 
-   canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
-   for tile in snake_body:
-    canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="lime green" )
+    #draw player 1 snake 
+    canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
+    for tile in snake_body:
+     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="lime green" )
    
-   #draw player 2 snake 
-   canvas.create_rectangle(snake2.x, snake2.y, snake2.x + TILE_SIZE, snake2.y + TILE_SIZE, fill = "#ff4fae")
-   for tile in snake2_body:
-    canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="#ff4fae")
+    #draw player 2 snake 
+    canvas.create_rectangle(snake2.x, snake2.y, snake2.x + TILE_SIZE, snake2.y + TILE_SIZE, fill = "#ff4fae")
+    for tile in snake2_body:
+     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="#ff4fae")
+    # scoreboard centered
    
-   canvas.create_text(30,20, font ="Arial 10", text=f"P1: {score}", fill="white", anchor="w")
-   canvas.create_text(window_width- 30,20, font="Arial 10", text=f"P2: {score2}", fill="white",anchor="e")
+    left_center_x= (PAD + WINDOW_WIDTH//2) //2
+    right_center_x= (WINDOW_WIDTH//2 + (WINDOW_WIDTH - PAD)) //2
+    canvas.create_text(left_center_x, 25, text=f"P1: {score}", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+    canvas.create_text(right_center_x, 25, text= f"P2: {score2}", fill=NEON_PINK,font = FONT_HUD,anchor="center")
    
    
-   if(game_over):
+if(game_over):
       #winner text
       if score > score2:
          result = f"Player 1 wins!  {score}-{score2}"
@@ -234,10 +272,9 @@ def draw():
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 - 20, font =("Arial", 20, "bold"), text ="GAME OVER", fill="white") 
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 + 20, font =("Arial", 14, "bold"), text=result, fill="white") 
       
-   else:
       window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
 draw()
 
-window.bind("<KeyRelease>", change_direction)
+window.bind("<KeyRelease>", handle_keypress)
 window.mainloop()
