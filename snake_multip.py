@@ -1,6 +1,7 @@
 import tkinter
 import random
 
+# hier heb ik alle kleuren en lettertypes gezet zodat ik ze later makkelijk kan gebruiken 
 WHITE = "#ffffff"
 NEON_GREEN = "#39FF14"
 NEON_PINK = "#FF4FAE"
@@ -11,32 +12,40 @@ FONT_H1 = ("Arial Black", 40)
 FONT_HUD = ("Arial Black", 25)
 FONT_BTN = ("Arial Black", 18)
 
+
+# dit bepaalt hoe groot het speelveld is 
 ROWS = 25
 COLS = 25
 TILE_SIZE = 25
-PAD=50 
+PAD=50  # dit is de rand voor de groene ruimte
+PAD2=175
 
+#hier bereken ik de totale grootte van het speelveld uit
 WINDOW_WIDTH = TILE_SIZE * COLS
 WINDOW_HEIGHT= TILE_SIZE * ROWS
 
+#dit is een klein hulpje om een positie (x en y) op te slaan
 class Tile:  
  def __init__(self, x,y):
      self.x = x
      self.y = y
 
-#game window
+#hier maak ik het venster van het spel
 window = tkinter.Tk()
 window.title("Snake")
 window.resizable(False, False)
 
+#hier maak ik een tekenbord waar alles op getekend zal worden
 canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=5)
 canvas.pack()
 window.update()
 
+#dit tekent het groene kader 
 def draw_frame():
    canvas.create_rectangle(PAD,PAD, WINDOW_WIDTH - PAD, WINDOW_HEIGHT - PAD, outline="#39ff14", width=4)
 
-#center the window
+
+#dit zorgt ervoor dat het venster in het midden staat
 window_width = window.winfo_width()
 window_height= window.winfo_height()
 screen_width = window.winfo_screenwidth()
@@ -46,27 +55,30 @@ window_y = int((screen_height/2)- (window_height/2))
 #format "(w)x(h)+(x)(y)"
 window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
 
-#initialize game
+#startpositie van speler 1 en 2
 #player 1 (WASD-green)
-snake = Tile(5*TILE_SIZE, 5*TILE_SIZE) #single tile, snake's head
+snake = Tile(4*TILE_SIZE, 4*TILE_SIZE) #single tile, snake's head
 snake_body = [] #multiple snake tiles
 velocityX = 0
 velocityY = 0
 score = 0
 
 #player 2 (Arrows-pink)
-snake2 = Tile(15*TILE_SIZE, 15*TILE_SIZE) #single tile, snake's head
+snake2 = Tile(20*TILE_SIZE, 20*TILE_SIZE) #single tile, snake's head
 snake2_body = [] #multiple snake tiles
 velocity2X = 0
 velocity2Y = 0
 score2 = 0
 
-#shared objects
-food = Tile(10*TILE_SIZE, 10*TILE_SIZE)
+high_score = 0
+
+#startpositie eten
+food = Tile(12*TILE_SIZE, 12*TILE_SIZE)
 game_over = False
 
-game_state = "menu"
+game_state = "menu" 
 
+#dit verandert de richting van de slangen als je een toets indrukt 
 def change_direction(e): #e = event
    #print(e)
    #print(e.keysym)
@@ -74,7 +86,7 @@ def change_direction(e): #e = event
    if(game_over):
       return
    
-    #player 1(WASD) 
+    #Player 1 stuurt met (WASD) 
    if((e.keysym == "w" or e.keysym =="W") and velocityY != 1):
       velocityX = 0
       velocityY = -1
@@ -88,7 +100,7 @@ def change_direction(e): #e = event
       velocityX = 1
       velocityY = 0
 
-    #Player 2 (Arrows)
+    #Player 2 stuurt met (Arrows)
    if(e.keysym == "Up" and velocity2Y != 1):
       velocity2X = 0
       velocity2Y = -1
@@ -102,7 +114,7 @@ def change_direction(e): #e = event
       velocity2X = 1
       velocity2Y = 0
 
-
+   # dit regelt wat er gebeurt als je een toets indrukt
 def handle_keypress(e):
     global game_state
     #start game from menu
@@ -113,9 +125,9 @@ def handle_keypress(e):
     if game_state == "playing":
       change_direction(e)
 
-
+# zorgt ervoor dat de slangen bewegen en wat er gebeurt als ze botsen of eten
 def  move():
-   global snake,snake2, food, snake_body, snake2_body, game_over, score, score2
+   global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, high_score
    if (game_over):
       return
 
@@ -142,6 +154,7 @@ def  move():
       food.x = random.randint(min_col, max_col) * TILE_SIZE
       food.y = random.randint(min_row, max_row) * TILE_SIZE
       score += 1
+      high_score = max(high_score, score, score2)
 
    #player tail follow   
    for i in range (len(snake_body)-1, -1, -1):
@@ -181,6 +194,7 @@ def  move():
       food.x = random.randint(min_col, max_col) * TILE_SIZE
       food.y = random.randint(min_row, max_row) * TILE_SIZE
       score2 += 1
+      high_score = max(high_score,score, score2)
 
    #player 2 tail follow   
    for i in range (len(snake2_body)-1, -1, -1):
@@ -220,20 +234,28 @@ def  move():
       game_over = True
       return
 
-
+# dit tekent alles opnieuw op het scherm
 def draw():
-    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state
+    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score
     move()
     canvas.delete("all")
     draw_frame()
 
-    # Menu state
+    # dit is het menu scherm 
     if game_state == "menu":
     #title text in center
      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill = NEON_GREEN, font=FONT_H1, anchor="center")
+
+
     # Hint text
      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 10, text="Press SPACE to start", fill = WHITE, font= FONT_HUD, anchor="center")
     
+   # dit is het play again scherm
+     if game_state == "game_over":
+       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 40, text="Press SPACE to play again", fill = WHITE, font= FONT_HUD, anchor="center")
+
+
+
      window.after(100,draw)
      return 
 
@@ -254,8 +276,11 @@ def draw():
    
     left_center_x= (PAD + WINDOW_WIDTH//2) //2
     right_center_x= (WINDOW_WIDTH//2 + (WINDOW_WIDTH - PAD)) //2
+    
+   
     canvas.create_text(left_center_x, 25, text=f"P1: {score}", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
     canvas.create_text(right_center_x, 25, text= f"P2: {score2}", fill=NEON_PINK,font = FONT_HUD,anchor="center")
+    canvas.create_text(WINDOW_WIDTH // 2, 25, text=f"High Score: {high_score}", fill=YELLOW, font=("Arial Black", 10), anchor="center")
    
    
     if(game_over):
@@ -266,8 +291,7 @@ def draw():
          result = f"Player 2 wins!  {score2}-{score}"
       else: 
           result = f"It's a tie!  {score}-{score2}"
-
-    
+          
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 - 20, font =("Arial", 20, "bold"), text ="GAME OVER", fill="white") 
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 + 20, font =("Arial", 14, "bold"), text=result, fill="white") 
       
