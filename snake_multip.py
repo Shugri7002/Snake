@@ -11,7 +11,6 @@ FONT_H1 = ("Arial Black", 40)
 FONT_HUD = ("Arial Black", 25)
 FONT_BTN = ("Arial Black", 18)
 
-
 ROWS = 25
 COLS = 25
 TILE_SIZE = 25
@@ -224,6 +223,7 @@ def  move():
 
 def draw():
     global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state
+    move()
     canvas.delete("all")
     draw_frame()
 
@@ -236,11 +236,29 @@ def draw():
     
      window.after(100,draw)
      return 
+
     
-move()
-
-
-if(game_over):
+    #draw food
+    canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
+   
+    #draw player 1 snake 
+    canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
+    for tile in snake_body:
+     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="lime green" )
+   
+    #draw player 2 snake 
+    canvas.create_rectangle(snake2.x, snake2.y, snake2.x + TILE_SIZE, snake2.y + TILE_SIZE, fill = "#ff4fae")
+    for tile in snake2_body:
+     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="#ff4fae")
+    # scoreboard centered
+   
+    left_center_x= (PAD + WINDOW_WIDTH//2) //2
+    right_center_x= (WINDOW_WIDTH//2 + (WINDOW_WIDTH - PAD)) //2
+    canvas.create_text(left_center_x, 25, text=f"P1: {score}", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+    canvas.create_text(right_center_x, 25, text= f"P2: {score2}", fill=NEON_PINK,font = FONT_HUD,anchor="center")
+   
+   
+    if(game_over):
       #winner text
       if score > score2:
          result = f"Player 1 wins!  {score}-{score2}"
@@ -253,7 +271,8 @@ if(game_over):
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 - 20, font =("Arial", 20, "bold"), text ="GAME OVER", fill="white") 
       canvas.create_text(window_width/2, WINDOW_HEIGHT/2 + 20, font =("Arial", 14, "bold"), text=result, fill="white") 
       
-      window.after(100, draw) #100ms = 1/10 second, 10 frames/second
+    else: 
+       window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
 draw()
 
