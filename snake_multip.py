@@ -227,38 +227,19 @@ def draw():
     canvas.delete("all")
     draw_frame()
 
-   # Menu state
+    # Menu state
     if game_state == "menu":
-   #title text in center
+    #title text in center
      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill = NEON_GREEN, font=FONT_H1, anchor="center")
     # Hint text
      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 10, text="Press SPACE to start", fill = WHITE, font= FONT_HUD, anchor="center")
     
      window.after(100,draw)
      return 
+    
+move()
 
-    (move)
 
-    #draw food
-    canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
-   
-    #draw player 1 snake 
-    canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill = "lime green")
-    for tile in snake_body:
-     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="lime green" )
-   
-    #draw player 2 snake 
-    canvas.create_rectangle(snake2.x, snake2.y, snake2.x + TILE_SIZE, snake2.y + TILE_SIZE, fill = "#ff4fae")
-    for tile in snake2_body:
-     canvas.create_rectangle(tile.x, tile.y, tile.x +TILE_SIZE, tile.y + TILE_SIZE, fill="#ff4fae")
-    # scoreboard centered
-   
-    left_center_x= (PAD + WINDOW_WIDTH//2) //2
-    right_center_x= (WINDOW_WIDTH//2 + (WINDOW_WIDTH - PAD)) //2
-    canvas.create_text(left_center_x, 25, text=f"P1: {score}", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
-    canvas.create_text(right_center_x, 25, text= f"P2: {score2}", fill=NEON_PINK,font = FONT_HUD,anchor="center")
-   
-   
 if(game_over):
       #winner text
       if score > score2:
