@@ -7,10 +7,10 @@ NEON_GREEN = "#39FF14"
 NEON_PINK = "#FF4FAE"
 YELLOW = "#FFD34D"
 
-FONT_TILE = ("Arial Black", 54)
-FONT_H1 = ("Arial Black", 40)
-FONT_HUD = ("Arial Black", 25)
-FONT_BTN = ("Arial Black", 18)
+FONT_TILE = ("Arial Black", 54, "bold")
+FONT_H1 = ("Arial Black", 40, "bold")
+FONT_HUD = ("Arial Black", 25, "bold")
+FONT_BTN = ("Arial Black", 18, "bold")
 
 
 # dit bepaalt hoe groot het speelveld is 
@@ -82,6 +82,7 @@ game_state = "menu"
 def change_direction(e): #e = event
    #print(e)
    #print(e.keysym)
+
    global velocityX, velocityY, velocity2X, velocity2Y
    if(game_over):
       return
@@ -114,16 +115,45 @@ def change_direction(e): #e = event
       velocity2X = 1
       velocity2Y = 0
 
+def reset_game(): 
+ global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score, velocityX, velocityY, velocity2X, velocity2Y 
+ snake = Tile(4*TILE_SIZE, 4*TILE_SIZE)
+ snake_body = [] 
+ velocityX = 0
+ velocityY = 0
+ score = 0
+
+ #player 2 (Arrows-pink)
+ snake2 = Tile(20*TILE_SIZE, 20*TILE_SIZE) 
+ snake2_body = []
+ velocity2X = 0
+ velocity2Y = 0
+ score2 = 0
+
+ food = Tile(12*TILE_SIZE, 12*TILE_SIZE)
+ game_over = False
+ game_state= "playing"
+ 
+
    # dit regelt wat er gebeurt als je een toets indrukt
 def handle_keypress(e):
     global game_state
     #start game from menu
     if game_state == "menu" and e.keysym.lower() == "space":
+       game_state = "uitleg" 
+       return
+    # go from uitleg to playing
+    if game_state == "uitleg" and e.keysym.lower() == "space":
        game_state = "playing"
        return
+   # go from uitleg to playing
+    if game_over and e.keysym.lower() == "space":
+       reset_game()
+       return 
    #only allow movement while playing
     if game_state == "playing":
       change_direction(e)
+
 
 # zorgt ervoor dat de slangen bewegen en wat er gebeurt als ze botsen of eten
 def  move():
@@ -236,30 +266,35 @@ def  move():
 
 # dit tekent alles opnieuw op het scherm
 def draw():
-    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score
+    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score, game_over
     move()
     canvas.delete("all")
     draw_frame()
-
+    canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
     # dit is het menu scherm 
-    if game_state == "menu":
-    #title text in center
-     canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill = NEON_GREEN, font=FONT_H1, anchor="center")
+    if (game_state) == "menu":
+      # title text in center
+      canvas.create_rectangle(PAD,PAD, WINDOW_WIDTH - PAD, WINDOW_HEIGHT - PAD, outline="#39ff14", width=4)
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill=NEON_GREEN, font=FONT_TILE, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 100, text="Press SPACE to start", fill=WHITE, font=FONT_HUD, anchor="center")
+      window.after(100, draw)
+      return
 
+    canvas.delete("all")
+    canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
+    # uitleg pagina (tweede pagina)
+    if (game_state)== "uitleg": 
+      #tekst uitleg
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -150, text="INSTRUCTIONS", fill=NEON_GREEN, font=FONT_H1, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 20, text="Player 1: W A S D keys", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 80, text="Player 2: Arrow keys", fill=NEON_PINK, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to play", fill=WHITE, font=FONT_HUD, anchor="center")
+      window.after(100, draw)
+      return
 
-    # Hint text
-     canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 10, text="Press SPACE to start", fill = WHITE, font= FONT_HUD, anchor="center")
-    
-   # dit is het play again scherm
-     if game_state == "game_over":
-       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 40, text="Press SPACE to play again", fill = WHITE, font= FONT_HUD, anchor="center")
+    #draw neon groen kader
+    canvas.create_rectangle(PAD,PAD, WINDOW_WIDTH - PAD, WINDOW_HEIGHT - PAD, outline="#39ff14", width=4)
 
-
-
-     window.after(100,draw)
-     return 
-
-    
     #draw food
     canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill= "#ffd34d",outline="")
    
@@ -292,13 +327,17 @@ def draw():
       else: 
           result = f"It's a tie!  {score}-{score2}"
           
-      canvas.create_text(window_width/2, WINDOW_HEIGHT/2 - 20, font =("Arial", 20, "bold"), text ="GAME OVER", fill="white") 
-      canvas.create_text(window_width/2, WINDOW_HEIGHT/2 + 20, font =("Arial", 14, "bold"), text=result, fill="white") 
-      
-    else: 
-       window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
-draw()
+       # Game over and result
+      canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + -80, font=("Arial", 40, "bold"), text="GAME OVER", fill="white")
+      canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50, font=("Arial", 18), text=result, fill= NEON_GREEN if score > score2 else NEON_PINK if score2 > score else "yellow")
+      canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 180, font=("Arial", 12), text="Press SPACE to play again", fill="white")
+      window.after(100, draw)
+      return 
+
+    
+window.after(100, draw) #100ms = 1/10 second, 10 frames/second
+
 
 window.bind("<KeyRelease>", handle_keypress)
 window.mainloop()
