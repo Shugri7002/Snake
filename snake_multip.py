@@ -78,11 +78,13 @@ game_over = False
 
 game_state = "menu" 
 
+
+
+
 #dit verandert de richting van de slangen als je een toets indrukt 
 def change_direction(e): #e = event
    #print(e)
    #print(e.keysym)
-
    global velocityX, velocityY, velocity2X, velocity2Y
    if(game_over):
       return
@@ -133,7 +135,7 @@ def reset_game():
  food = Tile(12*TILE_SIZE, 12*TILE_SIZE)
  game_over = False
  game_state= "playing"
- 
+ draw()
 
    # dit regelt wat er gebeurt als je een toets indrukt
 def handle_keypress(e):
@@ -142,14 +144,18 @@ def handle_keypress(e):
     if game_state == "menu" and e.keysym.lower() == "space":
        game_state = "uitleg" 
        return
-    # go from uitleg to playing
+    # go from uitleg to rules
     if game_state == "uitleg" and e.keysym.lower() == "space":
+       game_state = "rules"
+       return
+   # go from rules to playing
+    if game_state == "rules" and e.keysym.lower() == "space":
        game_state = "playing"
        return
    # go from uitleg to playing
     if game_over and e.keysym.lower() == "space":
        reset_game()
-       return 
+       return
    #only allow movement while playing
     if game_state == "playing":
       change_direction(e)
@@ -285,10 +291,26 @@ def draw():
     # uitleg pagina (tweede pagina)
     if (game_state)== "uitleg": 
       #tekst uitleg
-      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -150, text="INSTRUCTIONS", fill=NEON_GREEN, font=FONT_H1, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -180, text="INSTRUCTIONS", fill= WHITE, font=FONT_H1, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 20, text="Player 1: W A S D keys", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 80, text="Player 2: Arrow keys", fill=NEON_PINK, font=FONT_HUD, anchor="center")
-      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to play", fill=WHITE, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
+      window.after(100, draw)
+      return
+
+    canvas.delete("all")
+    canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
+    # uitleg pagina (tweede pagina)
+    if (game_state)== "rules": 
+      #tekst uitleg
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -180, text="Rules", fill= WHITE, font=FONT_H1, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -60, text="1. COLLECT FOOD --> +1P", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -10, text="2. HIT THE WALL--> DEAD", fill=NEON_PINK, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 40, text="3. HIT YOURSELF --> DEAD", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 90, text="4. HIT OPPONENT --> DEAD", fill=NEON_PINK, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 140, text="MOST POINTS WIN", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
+
       window.after(100, draw)
       return
 
@@ -330,14 +352,14 @@ def draw():
 
        # Game over and result
       canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + -80, font=("Arial", 40, "bold"), text="GAME OVER", fill="white")
-      canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50, font=("Arial", 18), text=result, fill= NEON_GREEN if score > score2 else NEON_PINK if score2 > score else "yellow")
+      canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50, font=("Arial", 30), text=result, fill= NEON_GREEN if score > score2 else NEON_PINK if score2 > score else "yellow")
       canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 180, font=("Arial", 12), text="Press SPACE to play again", fill="white")
-      window.after(100, draw)
       return 
 
     
-window.after(100, draw) #100ms = 1/10 second, 10 frames/second
+    window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
+draw()
 
 window.bind("<KeyRelease>", handle_keypress)
 window.mainloop()
