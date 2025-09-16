@@ -30,6 +30,14 @@ class Tile:
      self.x = x
      self.y = y
 
+def toggle_pause(): 
+      global game_state
+      if game_state =="playing":
+         game_state = "paused"
+      elif game_state == "paused":
+         game_state = "playing"
+      
+
 #hier maak ik het venster van het spel
 window = tkinter.Tk()
 window.title("Snake")
@@ -38,6 +46,23 @@ window.resizable(False, False)
 #hier maak ik een tekenbord waar alles op getekend zal worden
 canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=5)
 canvas.pack()
+
+#pauze knop
+pause_btn = tkinter.Button(
+   window, 
+   text="⏸",
+   font=FONT_BTN,
+   bg="black",
+   fg="#39FF14",
+   activebackground="black",
+   activeforeground="#39FF14",
+   bd=0,
+   relief="flat",
+   highlightthickness=0,
+   padx=4, pady=0,
+   command=toggle_pause
+   )
+
 window.update()
 
 #dit tekent het groene kader 
@@ -77,8 +102,6 @@ food = Tile(12*TILE_SIZE, 12*TILE_SIZE)
 game_over = False
 
 game_state = "menu" 
-
-
 
 
 #dit verandert de richting van de slangen als je een toets indrukt 
@@ -159,6 +182,22 @@ def handle_keypress(e):
    #only allow movement while playing
     if game_state == "playing":
       change_direction(e)
+
+def update_pause_button():
+   #weergave pauze knop
+   if game_over:
+      pause_btn.place_forget()
+      return
+   
+   if game_state == "playing":
+      pause_btn.config(text="⏸")
+      pause_btn.place(relx=1.0, x=-10, y=-2, anchor ="ne")
+   elif game_state =="paused":
+      pause_btn.config(text="▶")
+      pause_btn.place(relx=1.0, x=-10, y=22, anchor="ne")
+   else: 
+      pause_btn.place_forget()
+
 
 
 # zorgt ervoor dat de slangen bewegen en wat er gebeurt als ze botsen of eten
@@ -272,17 +311,23 @@ def  move():
 
 # dit tekent alles opnieuw op het scherm
 def draw():
-    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score, game_over
-    move()
+    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, game_state, high_score
+    
+    #beweegt alleen tijdens spelen
+    if game_state =="playing" and not game_over:
+     move()
+
     canvas.delete("all")
-    draw_frame()
     canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
+    draw_frame()
+   
     # dit is het menu scherm 
     if (game_state) == "menu":
       # title text in center
       canvas.create_rectangle(PAD,PAD, WINDOW_WIDTH - PAD, WINDOW_HEIGHT - PAD, outline="#39ff14", width=4)
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill=NEON_GREEN, font=FONT_TILE, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 100, text="Press SPACE to start", fill=WHITE, font=FONT_HUD, anchor="center")
+      update_pause_button()
       window.after(100, draw)
       return
 
@@ -295,6 +340,7 @@ def draw():
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 20, text="Player 1: W A S D keys", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 80, text="Player 2: Arrow keys", fill=NEON_PINK, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
+      update_pause_button()
       window.after(100, draw)
       return
 
@@ -310,7 +356,7 @@ def draw():
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 90, text="4. HIT OPPONENT --> DEAD", fill=NEON_PINK, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 140, text="MOST POINTS WIN", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
-
+      update_pause_button()
       window.after(100, draw)
       return
 
@@ -355,8 +401,9 @@ def draw():
       canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50, font=("Arial", 30), text=result, fill= NEON_GREEN if score > score2 else NEON_PINK if score2 > score else "yellow")
       canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 180, font=("Arial", 12), text="Press SPACE to play again", fill="white")
       return 
-
     
+  #pauzeknop
+    update_pause_button()
     window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
 draw()
