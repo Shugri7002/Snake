@@ -1,36 +1,51 @@
 # SNAKE2
 
-# Beschrijving 
-Dit is een **multiplayer Snake Game** gebouwd in **Python (Tkinter)**.  
-Het doel is simpel: verzamel eten, maak je slang langer en scoor punten.  
-Pas op dat je niet tegen de muren, jezelf of de andere speler bots.
+## Description
+This is a **multiplayer Snake Game** built with **Python (Tkinter)**.  
+The goal is simple: collect food, grow your snake, and score points.  
+Be careful not to hit the walls, yourself, or the other player.
 
+## Installation
+1. Make sure **Python 3.13.7** with [Tkinter](https://docs.python.org/3/library/tkinter.html) is installed.  
+2. Clone the repository:  
 
-# Installatie / Vereisten 
-1. Zorg dat **Python 3** geïnstalleerd is ([download hier](https://www.python.org/downloads/)).
-2. Download dit project (ZIP of via GitHub).
-3. Pak het ZIP-bestand uit (als je ZIP hebt gedownload).
-4. Dubbelklik op het bestand **snake_game.py**.
+   ```bash
+   git clone https://github.com/Shugri7002/Snake.git
+   cd Snake
 
+3. Run the game:  
 
-# Gebruik / Besturing
-- Speler 1 (Groen): **W, A, S, D**
-- Speler 2 (Roze): **Pijltjestoetsen**
-- Pauze/Doorgaan: **knop rechtsboven**
+   ```bash
+   python snake_multip.py
 
+## Controls
+- Player 1 (Green): **W, A, S, D**  
+- Player 2 (Pink): **Arrow keys**  
+- Pause/Resume: **button in the top right corner**
 
-# Screenshots
-1. 
+## Rules
+1. Collect food to score points (+1 per item).  
+2. Hit the wall? → Game over.  
+3. Run into yourself? → Game over.  
+4. Hit the other player? → Game over.  
+5. The player with the highest score wins.  
 
-2. 
+## Screenshots
 
-3. 
+### Start screen
+1. ![Start screen](screenshots/startscreen.png)
 
-4. 
+### Instructions
+2. ![Instructions](screenshots/instructions.png)
 
-5. 
+### Rules
+3. ![Rules](screenshots/rules.png)
 
+### Gameplay
+4. ![Gameplay](screenshots/playscreen.png)
 
+### Game Over screen
+5. ![Game Over](screenshots/game-over-screen.png)
 
-# Auteur
-Shugri Farah, Klas oranje, 16-9-2025
+## Author
+Shugri Farah, Class Oranje, 16-9-2025

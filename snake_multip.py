@@ -18,7 +18,7 @@ ROWS = 25
 COLS = 25
 TILE_SIZE = 25
 PAD=50  # dit is de rand voor de groene ruimte
-PAD2=175
+PAD2= 35
 
 #hier bereken ik de totale grootte van het speelveld uit
 WINDOW_WIDTH = TILE_SIZE * COLS
@@ -46,6 +46,22 @@ window.resizable(False, False)
 #hier maak ik een tekenbord waar alles op getekend zal worden
 canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth = 0, highlightthickness=5)
 canvas.pack()
+
+#teruggaan knopje
+return_btn = tkinter.Button 
+window,
+text="◀️"
+font=FONT_BTN
+bg="black" 
+fg="#39FF14",
+activebackground="black",
+activeforeground="#39FF14",
+bd=0,
+relief="flat",
+highlightthickness=0,
+padx=0, pady=4,
+
+
 
 #pauze knop
 pause_btn = tkinter.Button(
@@ -77,6 +93,7 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 window_x = int((screen_width/2)- (window_width/2))
 window_y = int((screen_height/2)- (window_height/2))
+
 #format "(w)x(h)+(x)(y)"
 window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
 
@@ -194,7 +211,7 @@ def update_pause_button():
       pause_btn.place(relx=1.0, x=-10, y=-2, anchor ="ne")
    elif game_state =="paused":
       pause_btn.config(text="▶")
-      pause_btn.place(relx=1.0, x=-10, y=22, anchor="ne")
+      pause_btn.place(relx=1.0, x=-10, y=-2, anchor="ne")
    else: 
       pause_btn.place_forget()
 
@@ -221,11 +238,12 @@ def  move():
    if (snake.x == food.x and snake.y == food.y):
       snake_body.append(Tile(food.x, food.y))
 
-    # place food fully inside the neon frame
-      min_col = PAD // TILE_SIZE
-      max_col = (WINDOW_WIDTH  - PAD - TILE_SIZE)  // TILE_SIZE
-      min_row = PAD // TILE_SIZE
-      max_row = (WINDOW_HEIGHT - PAD - TILE_SIZE)  // TILE_SIZE
+# place food fully inside the neon frame
+      margin= 5
+      min_col = PAD2 // TILE_SIZE + margin
+      max_col = (WINDOW_WIDTH  - PAD2 - TILE_SIZE)  // TILE_SIZE -margin
+      min_row = PAD2 // TILE_SIZE + margin
+      max_row = (WINDOW_HEIGHT - PAD2 - TILE_SIZE)  // TILE_SIZE - margin
       food.x = random.randint(min_col, max_col) * TILE_SIZE
       food.y = random.randint(min_row, max_row) * TILE_SIZE
       score += 1
@@ -246,11 +264,6 @@ def  move():
    snake.x += velocityX * TILE_SIZE
    snake.y += velocityY * TILE_SIZE
 
-    #player 1 wall + neon green frame
-   if(snake.x <= PAD or snake.x + TILE_SIZE >= WINDOW_WIDTH - PAD or snake.y <= PAD or snake.y +TILE_SIZE >= WINDOW_HEIGHT - PAD):
-    game_over = True
-    return
-   
    #player 2 self
    for tile in snake2_body:
       if(snake2.x== tile.x and snake2.y == tile.y):
@@ -262,14 +275,15 @@ def  move():
       snake2_body.append(Tile(food.x, food.y))
 
     # place food fully inside the neon frame
-      min_col = PAD // TILE_SIZE
-      max_col = (WINDOW_WIDTH  - PAD - TILE_SIZE)  // TILE_SIZE
-      min_row = PAD // TILE_SIZE
-      max_row = (WINDOW_HEIGHT - PAD - TILE_SIZE)  // TILE_SIZE
+      margin= 5
+      min_col = PAD2 // TILE_SIZE + margin
+      max_col = (WINDOW_WIDTH  - PAD2 - TILE_SIZE)  // TILE_SIZE -margin
+      min_row = PAD2 // TILE_SIZE + margin
+      max_row = (WINDOW_HEIGHT - PAD2 - TILE_SIZE)  // TILE_SIZE - margin
       food.x = random.randint(min_col, max_col) * TILE_SIZE
       food.y = random.randint(min_row, max_row) * TILE_SIZE
       score2 += 1
-      high_score = max(high_score,score, score2)
+      high_score = max(high_score, score, score2)
 
    #player 2 tail follow   
    for i in range (len(snake2_body)-1, -1, -1):
