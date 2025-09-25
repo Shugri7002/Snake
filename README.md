@@ -48,4 +48,4 @@ Be careful not to hit the walls, yourself, or the other player.
 5. ![Game Over](screenshots/game-over-screen.png)
 
 ## Author
-Shugri Farah, Class Oranje, 16-9-2025
+Shugri Farah, Class Oranje, 25-9-2025
