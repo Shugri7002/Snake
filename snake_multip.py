@@ -48,20 +48,34 @@ canvas = tkinter.Canvas(window, bg ="black", width= WINDOW_WIDTH, height = WINDO
 canvas.pack()
 
 #teruggaan knopje
-return_btn = tkinter.Button 
-window,
-text="◀️"
-font=FONT_BTN
-bg="black" 
-fg="#39FF14",
-activebackground="black",
-activeforeground="#39FF14",
-bd=0,
-relief="flat",
-highlightthickness=0,
-padx=0, pady=4,
-
-
+return_btn = tkinter.Button (
+ window,
+ text="◀️",
+ font=FONT_TILE,
+ bg="black",
+ fg="#39FF14",
+ activebackground="black",
+ activeforeground="#39FF14",
+ bd=0,
+ relief="flat",
+ highlightthickness=0,
+ padx=0, pady=0,
+ )
+ 
+# forward knopje
+forward_btn = tkinter.Button(
+   window,
+   text="▶️",
+   font=FONT_TILE,
+   bg="black",
+   fg="#39FF14",
+   activebackground="black",
+   activeforeground="#39FF14",
+   bd=0,
+   relief="flat",
+   highlightthickness=0,
+   padx=0, pady=0,
+)
 
 #pauze knop
 pause_btn = tkinter.Button(
@@ -75,7 +89,7 @@ pause_btn = tkinter.Button(
    bd=0,
    relief="flat",
    highlightthickness=0,
-   padx=4, pady=0,
+   padx=0, pady=0,
    command=toggle_pause
    )
 
@@ -216,7 +230,6 @@ def update_pause_button():
       pause_btn.place_forget()
 
 
-
 # zorgt ervoor dat de slangen bewegen en wat er gebeurt als ze botsen of eten
 def  move():
    global snake,snake2, food, snake_body, snake2_body, game_over, score, score2, high_score
@@ -342,6 +355,7 @@ def draw():
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 40, text="SNAKE2", fill=NEON_GREEN, font=FONT_TILE, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 100, text="Press SPACE to start", fill=WHITE, font=FONT_HUD, anchor="center")
       update_pause_button()
+
       window.after(100, draw)
       return
 
@@ -353,7 +367,7 @@ def draw():
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -180, text="INSTRUCTIONS", fill= WHITE, font=FONT_H1, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 20, text="Player 1: W A S D keys", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 80, text="Player 2: Arrow keys", fill=NEON_PINK, font=FONT_HUD, anchor="center")
-      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 200, text="Press SPACE to start", fill=WHITE, font=FONT_HUD, anchor="center")
       update_pause_button()
       window.after(100, draw)
       return
@@ -362,14 +376,14 @@ def draw():
     canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
     # uitleg pagina (tweede pagina)
     if (game_state)== "rules": 
-      #tekst uitleg
+      #tekst rules
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -180, text="Rules", fill= WHITE, font=FONT_H1, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -60, text="1. COLLECT FOOD --> +1P", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + -10, text="2. HIT THE WALL--> DEAD", fill=NEON_PINK, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 40, text="3. HIT YOURSELF --> DEAD", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 90, text="4. HIT OPPONENT --> DEAD", fill=NEON_PINK, font=FONT_HUD, anchor="center")
       canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 140, text="MOST POINTS WIN", fill=NEON_GREEN, font=FONT_HUD, anchor="center")
-      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 230, text="Press SPACE to continue", fill=WHITE, font=FONT_HUD, anchor="center")
+      canvas.create_text(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 220, text="Press SPACE to start", fill=WHITE, font=FONT_HUD, anchor="center")
       update_pause_button()
       window.after(100, draw)
       return
